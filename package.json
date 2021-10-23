@@ -1,0 +1,27 @@
+{
+  "name": "employee-tracker",
+  "version": "1.0.0",
+  "description": "command line employee tracker",
+  "main": "index.js",
+  "scripts": {
+    "test": "none"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FenixS83/employee-tracker.git"
+  },
+  "keywords": [
+    "command",
+    "line",
+    "node.js"
+  ],
+  "author": "Fenix Sampson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/FenixS83/employee-tracker/issues"
+  },
+  "homepage": "https://github.com/FenixS83/employee-tracker#readme",
+  "dependencies": {
+    "inquirer": "^8.2.0"
+  }
+}
