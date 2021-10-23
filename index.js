@@ -19,3 +19,27 @@ const sequelize = new Sequelize(
     }
 );
 
+//Variables
+let roles;
+let departments;
+let managers;
+let employees;
+
+var connection = mysql.createConnection({
+    host: "localhost",
+
+    //Port
+    port: 3001,
+
+    //Username
+    user: process.env.DB_USER,
+
+    //Password
+    password: process.env.DB_PASSWORD,
+    database: "employees_db",
+});
+
+figlet("EMPLOYEE TRACKER", (err, result) => {
+    console.log(err || result);
+});
+
