@@ -48,7 +48,13 @@ SELECT r.id, r.title, r.salary, d.name AS department_name FROM role AS r INNER J
 --Query for retrieving employees
 SELECT id, CONCAT_WS(" ", first_name, last_name) AS employee_name from employee;
 
---
+--Updating query
+UPDATE employee SET role_id = 3 WHERE id = 8;
+UPDATE emplyee SET ? WHERE ?;
+
+--Query for delete
+DELETE FROM department WHERE id =13;
+
 
 
 
