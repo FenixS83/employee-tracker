@@ -42,3 +42,13 @@ VALUES ("Ryan", "Crowder", "1", "1"), ("Julian", "Pedraza", "2", "1"), ("Dauphin
 --View All
 SELECT e.id, e.first_name, e.last_name, d.name AS department, r.title, r.salary, CONCAT_WS(" ", m.first_name, m.last_name) AS manager FROM employee e LEFT JOIN employee m ON m.id = e.manager_id INNER JOIN role r ON e.role_id = r.id INNER JOIN department d ON r.department_id = d.id ORDER BY e.id ASC;
 
+--View all roles
+SELECT r.id, r.title, r.salary, d.name AS department_name FROM role AS r INNER JOIN department AS d ON r.department_id = d.id;
+
+--Query for retrieving employees
+SELECT id, CONCAT_WS(" ", first_name, last_name) AS employee_name from employee;
+
+--
+
+
+
