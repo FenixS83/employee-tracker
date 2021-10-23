@@ -110,3 +110,13 @@ getManagers = () => {
     );
 };
 
+// Employee Selection
+getEmployees = () => {
+    connection.query("SELECT id, CONCAT_WS(' ', first_name, last_name) AS employee_name FROM employee",
+    (err, res) => {
+        if (err) throw err;
+        employees = res;
+        }
+    );
+};
+
