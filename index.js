@@ -84,3 +84,11 @@ start = () => {
         });
 };
 
+// Role selection
+getRoles = () => {
+    connection.query("SELECT id, title FROM role", (err, res) => {
+        if (err) throw err;
+        roles = res;
+    });
+};
+
