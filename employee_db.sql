@@ -29,3 +29,13 @@ CREATE TABLE employee (
     PRIMARY KEY(id)
 );
 
+--Populating tables with data
+INSERT INTO department (name)
+VALUES ("Sales"), ("Engineering"), ("Human Resources"), ("Legal"), ("Finance"), ("Artist");
+
+INSERT INTO role (title, salary, department_id)
+VALUES ("CEO", "100000", "7"), ("Software Developer", "70000", "2"), ("Lawyer", "60000", "3"), ("Lawyer", "60000", "4"), ("Actuary", "60000", "5"), ("Artist", "70000", "6"), ("Manager", "40000", "1");
+
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES ("Ryan", "Crowder", "1", "1"), ("Julian", "Pedraza", "2", "1"), ("Dauphine", "Burns", "3", "1"), ("Taegan", "Loyelle", "4", "1"), ("David", "Pedraza", "5", "1"), ("Jason", "Bailey", "6", "1"), ("Jordan", "Vasquez", "6", "1");
+
