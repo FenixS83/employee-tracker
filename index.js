@@ -54,3 +54,33 @@ connection.connect(function (err) {
     getEmployees();
 });
 
+// Initiating prompts
+start = () => {
+    inquirer
+        .prompt({
+            name: "choices",
+            type: "list",
+            message: "What wouuld you like to do?"
+            choices: ["ADD", "VIEW", "UPDATE", "DELETE", "EXIT"],
+        })
+        .then(function (answer) {
+            if (answer.choices === "ADD") {
+                addSomething();
+            } else if (answer.choices === "VIEW") {
+                viewSomething();
+            } else if (answer.choices === "UPDATE") {
+                updateSomething();
+            } else if (answer.choices === "DELETE") {
+                deleteSomething();
+            } else if (answer.choices === "EXIT") {
+                figlet("Thanks for using the Employee Tracker", (err, result) => {
+                    console.log(err || result);
+                });
+
+                connection.end();
+            } else {
+                connection.end();
+            }
+        });
+};
+
