@@ -6,6 +6,7 @@ const figle = require("figlet");
 
 
 const Sequelize = require("sequelize");
+const { startsWith } = require("sequelize/types/lib/operators");
 require("dotenv").config();
 
 const sequelize = new Sequelize(
@@ -41,5 +42,15 @@ var connection = mysql.createConnection({
 
 figlet("EMPLOYEE TRACKER", (err, result) => {
     console.log(err || result);
+});
+
+// Connect functions
+connection.connect(function (err) {
+    if (err) throw err;
+    start();
+    getDepartments();
+    getRoles();
+    getManagers();
+    getEmployees();
 });
 
