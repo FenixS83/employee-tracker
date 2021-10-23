@@ -92,3 +92,11 @@ getRoles = () => {
     });
 };
 
+// Department selection
+getDepartments = () => {
+    connection.query("Select id, name FROM department", (err, res) => {
+        if (err) throw err;
+        departments = res;
+    });
+};
+
