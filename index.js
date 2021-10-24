@@ -6,7 +6,7 @@ const figle = require("figlet");
 
 
 const Sequelize = require("sequelize");
-const { startsWith } = require("sequelize/types/lib/operators");
+const { startsWith, notBetween } = require("sequelize/types/lib/operators");
 require("dotenv").config();
 
 const sequelize = new Sequelize(
@@ -403,6 +403,74 @@ updateSomething = () => {
             } else {
                 connection.end();
             }
+        });
+};
+
+// Employee section of update menu 
+updateEmployeeRole = () => {
+    let employeeOptions = [];
+
+    for (var i=0; i<employees.length; i++) {
+        employeeOptions.push(Object(employee[i]));
+    }
+    inquirer
+        .prompt([
+            {
+                name: "updateRole",
+                type: "list",
+                message: "Which employee role would you like to update?",
+                choices: function () {
+                    var choiceArray = [];
+                    for (var i=0; i<employeeOptions.length; i++) {
+                        choiceArray.push(employeeOptions[i].Employee_Name);
+                    }
+                    return choiceArray;
+                },
+            },
+        ])   
+        .then((answer) => {
+            let roleOptions = [];
+            for (i=0; i<roles.length; i++) {
+                roleOptions.push(Object(roles[i]));
+            }
+            for (i=0; i< employeeOptions.length; i++) {
+                if (employeeOptions[i].Employee_Name === answer.updateRole) {
+                    employeeSelected = employeeOptions[i].id;
+                }
+            }
+            inquirer
+            .prompt([
+                {
+                    name: "newRole",
+                    type: "list",
+                    message: "Select a new role:",
+                    choices: function () {
+                        var choiceArray = [];
+                        for (var i=0; i<roleOptions.length; i++) {
+                            choiceArray.push(roleOptions[I].title);
+                        }
+                        return choiceArray;
+                    },
+                },
+            ])
+
+            .then((answer) => {
+                for (i=0; i<roleOptions.length; i++) {
+                    if (answer.newRole === roleOptions[i].title) {
+                        newChoice = roleOptions[i].id;
+                        connection.query(
+                            `UPDATE employee SET role_id = ${newChoice} WHERE id = ${employeeSelected}`
+                        ),
+                        (err, res) => {
+                            if (err) throw err;
+                        };
+                    }
+                }
+                console.log("Role updated successfully");
+                getEmployees();
+                getRoles();
+                start();
+            });
         });
 };
 
