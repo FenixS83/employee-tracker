@@ -579,3 +579,41 @@ deleteSomething = () => {
         });
 };
 
+// Department section of Delete Menu
+deleteDepartment = () => {
+    let departmentOptions = [];
+    for (var i=0; i<departments.length; i++) {
+        departmentOptions.push(Object(departments[i]));
+    }
+    inquirer
+        .prompt([
+            {
+                name: "deleteDepartment",
+                type: "list",
+                message: "Which department would you like to delete?",
+                choices: function () {
+                    var choiceArray = [];
+                    for (var i=0; i<departmentOptions.length; i++) {
+                        choiceArray.push(departmentOptions[i]);
+                    }
+                    return choiceArray;
+                },
+            },
+        ])
+        .then((answer) => {
+            for (i=0; i<departmentOptions.length; i++) {
+                if (answer.deleteDepartment === departmentOptions[i].name) {
+                    newChoice = departmentOptions[i].id;
+                    connection.query(`DELETE FROM department WHERE id = ${newChoice}`),
+                    (err, res) => {
+                        if (err) throw err;
+                    };
+                    console.log(
+                        "Department: " + answer.deleteDepartment + "Deleted Successfully"
+                    );
+                }
+            }
+            getDepartments();
+            start();
+        });
+};
