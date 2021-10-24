@@ -376,3 +376,33 @@ viewEmployees = () => {
         }
     );
 };
+
+// Menu for updating content
+updateSomething = () => {
+    inquirer
+        .prompt([
+            {
+                name: "update",
+                type: "list",
+                message: "What would you like to update?",
+                choices: ["Update Employee Roles", "Update Employee Managers", "EXIT"],
+            },
+        ])
+
+        .then((answer) => {
+            if (answer.update === "Update Employee Roles") {
+                updateEmployeeRole();
+            } else if (answer.update === "Update Employee Managers") {
+                updateEmployeeManager();
+            } else if (answer.update === "EXIT") {
+                figlet("Thanks for using Employee Tracker", (err, result) => {
+                    console.log(err || result);
+                });
+
+                connection.end();
+            } else {
+                connection.end();
+            }
+        });
+};
+
