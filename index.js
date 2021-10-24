@@ -60,7 +60,7 @@ start = () => {
         .prompt({
             name: "choices",
             type: "list",
-            message: "What wouuld you like to do?"
+            message: "What wouuld you like to do?",
             choices: ["ADD", "VIEW", "UPDATE", "DELETE", "EXIT"],
         })
         .then(function (answer) {
@@ -204,22 +204,100 @@ addRole = () => {
             choices: departmentOptions,
         },
     ])
-    .then(functin (answer) {
-        for (i=0; i < departmentOptions.length; i++) {
-            if (departmentOptions[i].name === answer.department_id) {
-                department_id = departmentOptions[i].dialect;
-            }
+
+    .then(function (answer) {
+        for (i = 0; i < departmentOptions.length; i++) {
+          if (departmentOptions[i].name === answer.department_id) {
+            department_id = departmentOptions[i].id;
+          }
         }
         connection.query(
-            `INSERT INTO role (title, salary, department_id) VALUES ('${answer.title}', '${answer.salary}', '${department_id})`,
-            (err, res) => {
-                if (err) throw err;
-
-                console.log("1 new role added: " + answer.title);
-                getRoles();
-                start();
-            }
+          `INSERT INTO role (title, salary, department_id) VALUES ('${answer.title}', '${answer.salary}', ${department_id})`,
+          (err, res) => {
+            if (err) throw err;
+  
+            console.log("1 new role added: " + answer.title);
+            getRoles();
+            start();
+          }
         );
-    });
+      });
+  };
+
+// Employee section of add menu
+addEmployee = () => {
+    getRoles();
+    getManagers();
+    let roleOptions = [];
+    for (i=0; i<roles.length; i++) {
+        roleOptions.push(Object(roles[i]));
+    }
+    inquirer
+        .prompt([
+            {
+                name: "first_name",
+                type: "input",
+                message: "What is the employee's first name?",
+            },
+            {
+                name: "last_name",
+                type: "input",
+                message: "What is the employee's last name?",
+            },
+            {
+                name: "role_id",
+                type: "list",
+                message: "What is the role for this employee?",
+                choices: function () {
+                    var choiceArray = [];
+                    for (var i = 0; i < roleOptions.length; i++) {
+                      choiceArray.push(roleOptions[i].title);
+                    }
+                    return choiceArray;
+                },
+            },
+            {
+                name: "manager_id",
+                type: "list",
+                message: "Who is the employee's manager?",
+                choices: function () {
+                    var choiceArray = [];
+                    for (var i=0; i<managerOptions.length; i++) {
+                        choiceArray.push(managerOptions[i].managers);
+                    }
+                    return choiceArray;
+                },
+            },
+        ])
+        
+        .then (function (answer) {
+            for (i=0; i<roleOptions.length; i++) {
+                if (roleOptions[i].title === answer.role_id) {
+                    role_id = roleOptions[i].id;
+                }
+            }
+
+            for (i=0; i<managerOptions.length; i++) {
+                if (managerOptions[i].managers === answer.manager_id) {
+                    manager_id = managerOptions[i].id;
+                }
+            }
+
+            connection.query(
+                `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${answer.first_name}', '${answer.last_name}', ${role_id}, ${manager_id})`,
+                (err, res) => {
+                    if (err) throw err;
+
+                    console.log(
+                        "1 new employee added: " + 
+                        answer.first_name +
+                        " " +
+                        answer.last_name
+                    );
+                    getEmployees();
+                    start();
+                }
+            );
+        });
 };
 
