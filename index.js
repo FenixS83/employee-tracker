@@ -7,6 +7,7 @@ const figle = require("figlet");
 
 const Sequelize = require("sequelize");
 const { startsWith, notBetween } = require("sequelize/types/lib/operators");
+const { ConnectionRefusedError } = require("sequelize");
 require("dotenv").config();
 
 const sequelize = new Sequelize(
@@ -542,3 +543,39 @@ updateEmployeeManager = () => {
         });
     });
 };
+
+// Menu for deleting content
+deleteSomething = () => {
+    inquirer
+        .prompt([
+            {
+                name: "delete",
+                type: "list",
+                message: "What would you like to delete?",
+                choices: [
+                    "Delete Department",
+                    "Delete Role",
+                    "Delete Employee",
+                    "Exit",
+                ],
+            },
+        ])
+        .then((answer) => {
+            if (answer.delete === "Delete Department") {
+                deleteDepartment();
+            } else if (answer.delete === "Delete Role") {
+                deleteRole();
+            } else if (answer.delete === "Delete Employee") {
+                deleteEmployee();
+            } else if (answer.delete === "EXIT") {
+                figlet("Thanks for using Employee Tracker", (err, result) => {
+                    console.log(err || result);
+                });
+
+                connection.end();
+            } else {
+                connection.end();
+            }
+        });
+};
+
