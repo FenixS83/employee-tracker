@@ -657,3 +657,42 @@ deleteRole = () => {
         });
 };
 
+// Employee section of Delete Menu
+deleteEmployee = () => {
+    let employeeOptions = [];
+    for (var i = 0; i < employees.length; i++) {
+      employeeOptions.push(Object(employees[i]));
+    }
+
+    inquirer
+        .prompt([
+            {
+                name: "deleteEmployee",
+                type: "list",
+                message: "Which employee would you like to delete?",
+                choices: function () {
+                    var choiceArray = [];
+                    for (var i=0; i<employeeOptions.length; i++) {
+                        choiceArray.push(employeeOptions[i].Employee_Name);
+                    }
+                    return choiceArray;
+                },
+            },
+        ])
+        .then((answer) => {
+            for (i=0; i<employeeOptions.length; i++) {
+                if (answer.deleteEmployee === employeeOptions[i].Employee_Name) {
+                    newChoice = employeeOptions[i].id;
+                    connection.query(`DELETE FROM employees WHERE id = ${newChoice}`),
+                    (err, res) => {
+                        if (err) throw err;
+                    };
+                    console.log(
+                      "Employee: " + answer.deleteEmployee + " Deleted Successfully"
+                  );
+                }
+            }
+            getEmployees();
+            start();
+        });
+    };
