@@ -12,7 +12,7 @@ CREATE TABLE department (
     PRIMARY KEY (id)
 );
 
-CREATE TABLE role (
+CREATE TABLE roles (
     id INT NOT NULL AUTO_INCREMENT,
     title VARCHAR(50) NOT NULL,
     salary DECIMAL(10,2) NOT NULL,
@@ -37,7 +37,7 @@ INSERT INTO role (title, salary, department_id)
 VALUES ("CEO", "100000", "7"), ("Software Developer", "70000", "2"), ("Lawyer", "60000", "3"), ("Lawyer", "60000", "4"), ("Actuary", "60000", "5"), ("Artist", "70000", "6"), ("Manager", "40000", "1");
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Ryan", "Crowder", "1", "1"), ("Julian", "Pedraza", "2", "1"), ("Dauphine", "Burns", "3", "1"), ("Taegan", "Loyelle", "4", "1"), ("David", "Pedraza", "5", "1"), ("Jason", "Bailey", "6", "1"), ("Jordan", "Vasquez", "6", "1");
+VALUES ("Fenix", "Sampson", "1", "1"), ("Brent", "Graves", "2", "1"), ("Gabriel", "Causin", "3", "1"), ("Thor", "Odinson", "4", "1"), ("Loki", "Laufeyson", "5", "1"), ("Lily", "Bell", "6", "1"), ("Tatum", "Head", "6", "1");
 
 --View All
 SELECT e.id, e.first_name, e.last_name, d.name AS department, r.title, r.salary, CONCAT_WS(" ", m.first_name, m.last_name) AS manager FROM employee e LEFT JOIN employee m ON m.id = e.manager_id INNER JOIN role r ON e.role_id = r.id INNER JOIN department d ON r.department_id = d.id ORDER BY e.id ASC;

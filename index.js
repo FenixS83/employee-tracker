@@ -2,20 +2,24 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 const {printTable} = require("console-table-printer");
-const figle = require("figlet");
-
+const figlet = require("figlet");
+const app = require("express");
+const PORT = 3001;
 
 const Sequelize = require("sequelize");
-const { startsWith, notBetween } = require("sequelize/types/lib/operators");
-const { ConnectionRefusedError } = require("sequelize");
 require("dotenv").config();
 
+app.listen(PORT, () =>
+  console.log(`Listening for requests on port ${PORT}! 🏎️`)
+);
+
+
 const sequelize = new Sequelize(
-    process.env.DB_NAME,
-    process.env.DB_USER,
-    process.env.DB_PASSWORD,
+    process.env.employees_db,
+    process.env.root,
+    process.env.rootroot,
     {
-        host: "localhost",
+        host: "localhost:3001",
         dialect: "mysql",
         port: 3001,
     }
@@ -23,7 +27,7 @@ const sequelize = new Sequelize(
 
 //Variables
 let roles;
-let departments;
+let department;
 let managers;
 let employees;
 
@@ -47,13 +51,13 @@ figlet("EMPLOYEE TRACKER", (err, result) => {
 
 // Connect functions
 connection.connect(function (err) {
-    if (err) throw err;
+         if (err) throw err;
     start();
-    getDepartments();
+    getDepartment();
     getRoles();
     getManagers();
     getEmployees();
-});
+  });
 
 // Initiating prompts
 start = () => {
@@ -87,17 +91,17 @@ start = () => {
 
 // Role selection
 getRoles = () => {
-    connection.query("SELECT id, title FROM role", (err, res) => {
-        if (err) throw err;
+    connection.query("SELECT id, title FROM roles", (err, res) => {
+             if (err) throw err;
         roles = res;
     });
 };
 
 // Department selection
-getDepartments = () => {
+getDepartment = () => {
     connection.query("Select id, name FROM department", (err, res) => {
-        if (err) throw err;
-        departments = res;
+             if (err) throw err;
+        department = res;
     });
 };
 
@@ -105,7 +109,7 @@ getDepartments = () => {
 getManagers = () => {
     connection.query("SELECT id, first_name, last_name, CONCAT_WS(' ', first_name, last_name) AS managers FROM employee",
         (err,res) => {
-        if (err) throw err;
+             if (err) throw err;
         managers = res;
         }    
     );
@@ -115,7 +119,7 @@ getManagers = () => {
 getEmployees = () => {
     connection.query("SELECT id, CONCAT_WS(' ', first_name, last_name) AS employee_name FROM employee",
     (err, res) => {
-        if (err) throw err;
+             if (err) throw err;
         employees = res;
         }
     );
@@ -129,7 +133,7 @@ addSomething = () => {
                 name: "add",
                 type: "list",
                 message: "What would you like to add?",
-                choices: ["DEPARTMENT", "ROLE", "EMPLOYEE", "EXIT"],
+                choices: ["DEPARTMENT", "ROLES", "EMPLOYEE", "EXIT"],
             },
         ])
 
@@ -137,56 +141,55 @@ addSomething = () => {
             if (answer.add === "DEPARTMENT") {
                 console.log("Add a new: " + answer.add);
                 addDepartment();
-            } else if (answer.add === "ROLE") {
+            } else if (answer.add === "ROLES") {
                 console.log("Add a new: " + answer.add);
-                addRole();
-            } else if (answer.add === "EMPLOYEE") {
+                addRoles();
+              } else if (answer.add === "EMPLOYEE") {
                 console.log("Add a new: " + answer.add);
                 addEmployee();
-            } else if (answer.add === "EXIT") {
-                figlet("Thanks for using Employee Tracker", (err, result) => {
-                    console.log(err || result);
+              } else if (answer.add === "EXIT") {
+                figlet("Thanks for using UNCC Employee Tracker", (err, result) => {
+                  console.log(err || result);
                 });
-
+        
                 connection.end();
-            } else {
+              } else {
                 connection.end();
-            }
-        });
-};
-
-//Department section of add menu
-addDepartment = () => {
-    inquirer
-        .prompt([
-            {
+              }
+            });
+        };
+        
+        // Department section of adding menu
+        addDepartment = () => {
+          inquirer
+            .prompt([
+              {
                 name: "department",
                 type: "input",
                 message: "What department would you like to add?",
-            },
-        ])
-
-        .then(function (answer) {
-            connection.query(
+              },
+            ])
+            .then(function (answer) {
+              connection.query(
                 `INSERT INTO department (name) VALUES ('${answer.department}')`,
                 (err, res) => {
-                    if (err) throw err;
-                    console.log("1 new department added: " + answer.department);
-                    getDepartments();
-                    start();
+                //   if (err) throw err;
+                  console.log("1 new department added: " + answer.department);
+                  getDepartment();
+                  start();
                 }
-            );
-        });
-};
-
-// Role section of add menu
-addRole = () => {
-    let departmentOptions = [];
-    for (i=0; i < departments.length; i++) {
-        departmentOptions.push(Object(departments[i]));
-    }
-
-    inquirer
+              );
+            });
+        };
+        
+        // Roles section of adding menu
+        addRoles = () => {
+          let departmentOptions = [];
+          for (i = 0; i<department.length; i++) {
+            departmentOptions.push(Object(department[i]));
+          }
+        
+          inquirer
     .prompt([
         {
             name: "title",
@@ -213,9 +216,9 @@ addRole = () => {
           }
         }
         connection.query(
-          `INSERT INTO role (title, salary, department_id) VALUES ('${answer.title}', '${answer.salary}', ${department_id})`,
+          `INSERT INTO roles (title, salary, department_id) VALUES ('${answer.title}', '${answer.salary}', ${department_id})`,
           (err, res) => {
-            if (err) throw err;
+                 if (err) throw err;
   
             console.log("1 new role added: " + answer.title);
             getRoles();
@@ -229,9 +232,13 @@ addRole = () => {
 addEmployee = () => {
     getRoles();
     getManagers();
-    let roleOptions = [];
-    for (i=0; i<roles.length; i++) {
-        roleOptions.push(Object(roles[i]));
+    let rolesOptions = [];
+    for (i = 0; i < roles.length; i++) {
+      rolesOptions.push(Object(roles[i]));
+    }
+    let managerOptions = [];
+    for (i = 0; i < managers.length; i++) {
+      managerOptions.push(Object(managers[i]));
     }
     inquirer
         .prompt([
@@ -246,13 +253,13 @@ addEmployee = () => {
                 message: "What is the employee's last name?",
             },
             {
-                name: "role_id",
+                name: "roles_id",
                 type: "list",
                 message: "What is the role for this employee?",
                 choices: function () {
                     var choiceArray = [];
-                    for (var i = 0; i < roleOptions.length; i++) {
-                      choiceArray.push(roleOptions[i].title);
+                    for (var i = 0; i < rolesOptions.length; i++) {
+                      choiceArray.push(rolesOptions[i].title);
                     }
                     return choiceArray;
                 },
@@ -272,9 +279,9 @@ addEmployee = () => {
         ])
         
         .then (function (answer) {
-            for (i=0; i<roleOptions.length; i++) {
-                if (roleOptions[i].title === answer.role_id) {
-                    role_id = roleOptions[i].id;
+            for (i=0; i<rolesOptions.length; i++) {
+                if (rolesOptions[i].title === answer.roles_id) {
+                    roles_id = rolesOptions[i].id;
                 }
             }
 
@@ -285,9 +292,9 @@ addEmployee = () => {
             }
 
             connection.query(
-                `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${answer.first_name}', '${answer.last_name}', ${role_id}, ${manager_id})`,
+                `INSERT INTO employee (first_name, last_name, roles_id, manager_id) VALUES ('${answer.first_name}', '${answer.last_name}', ${roles_id}, ${manager_id})`,
                 (err, res) => {
-                    if (err) throw err;
+                         if (err) throw err;
 
                     console.log(
                         "1 new employee added: " + 
@@ -310,13 +317,13 @@ viewSomething = () => {
             name: "viewChoice",
             type: "list",
             message: "What would you like to view?",
-            choices: ["DEPARTMENTS", "ROLES", "EMPLOYEES", "EXIT"],
+            choices: ["DEPARTMENT", "ROLES", "EMPLOYEES", "EXIT"],
         },
     ])
 
     .then((answer) => {
-        if (answer.viewChoice === "DEPARTMENTS") {
-            viewDepartments();
+        if (answer.viewChoice === "DEPARTMENT") {
+            viewDepartment();
         } else if (answer.viewChoice === "ROLES") {
             viewRoles();
         } else if (answer.viewChoice === "EMPLOYEES") {
@@ -334,10 +341,10 @@ viewSomething = () => {
 };
 
 // Department section of view menu
-viewDepartments = () => {
+viewDepartment = () => {
     connection.query("SELECT * FROM department", (err, res) => {
-        if (err) throw err;
-        figlet("Departments", (err, result) => {
+             if (err) throw err;
+        figlet("Department", (err, result) => {
             console.log(err || result);
         });
 
@@ -349,9 +356,9 @@ viewDepartments = () => {
 //Roles section of viewing menu
 viewRoles = () => {
     connection.query(
-        "SELECT r.id, r.title, r.salary, d.name as department_name FROM role AS r INNER JOIN department AS d on r.department_id = d.id",
+        "SELECT r.id, r.title, r.salary, d.name as department_name FROM roles AS r INNER JOIN department AS d on r.department_id = d.id",
         (err, res) => {
-            if (err) throw err;
+                 if (err) throw err;
             figlet("Roles", (err, result) => {
                 console.log(err || result);
             });
@@ -365,9 +372,9 @@ viewRoles = () => {
 // Employees section of viewing menu
 viewEmployees = () => {
     connection.query(
-        'SELECT  e.id, e.first_name, e.last_name, d.name AS department, r.title, r.salary, CONCAT_WS(" ", m.first_name, m.last_name) AS manager FROM employee e LEFT JOIN employee m ON m.id = e.manager_id INNER JOIN role r ON e.role_id = r.id INNER JOIN department d ON r.department_id = d.id ORDER BY e.id ASC',
+        'SELECT  e.id, e.first_name, e.last_name, d.name AS department, r.title, r.salary, CONCAT_WS(" ", m.first_name, m.last_name) AS manager FROM employee e LEFT JOIN employee m ON m.id = e.manager_id INNER JOIN roles r ON e.roles_id = r.id INNER JOIN department d ON r.department_id = d.id ORDER BY e.id ASC',
         (err, res) => {
-            if (err) throw err;
+                 if (err) throw err;
             figlet("Employees", (err, result) => {
                 console.log(err || result);
             });
@@ -392,7 +399,7 @@ updateSomething = () => {
 
         .then((answer) => {
             if (answer.update === "Update Employee Roles") {
-                updateEmployeeRole();
+                updateEmployeeRoles();
             } else if (answer.update === "Update Employee Managers") {
                 updateEmployeeManager();
             } else if (answer.update === "EXIT") {
@@ -408,7 +415,7 @@ updateSomething = () => {
 };
 
 // Employee section of update menu 
-updateEmployeeRole = () => {
+updateEmployeeRoles = () => {
     let employeeOptions = [];
 
     for (var i=0; i<employees.length; i++) {
@@ -417,7 +424,7 @@ updateEmployeeRole = () => {
     inquirer
         .prompt([
             {
-                name: "updateRole",
+                name: "updateRoles",
                 type: "list",
                 message: "Which employee role would you like to update?",
                 choices: function () {
@@ -430,25 +437,25 @@ updateEmployeeRole = () => {
             },
         ])   
         .then((answer) => {
-            let roleOptions = [];
+            let rolesOptions = [];
             for (i=0; i<roles.length; i++) {
-                roleOptions.push(Object(roles[i]));
+                rolesOptions.push(Object(roles[i]));
             }
             for (i=0; i< employeeOptions.length; i++) {
-                if (employeeOptions[i].Employee_Name === answer.updateRole) {
+                if (employeeOptions[i].Employee_Name === answer.updateRoles) {
                     employeeSelected = employeeOptions[i].id;
                 }
             }
             inquirer
             .prompt([
                 {
-                    name: "newRole",
+                    name: "newRoles",
                     type: "list",
                     message: "Select a new role:",
                     choices: function () {
                         var choiceArray = [];
-                        for (var i=0; i<roleOptions.length; i++) {
-                            choiceArray.push(roleOptions[I].title);
+                        for (var i=0; i<rolesOptions.length; i++) {
+                            choiceArray.push(rolesOptions[I].title);
                         }
                         return choiceArray;
                     },
@@ -456,14 +463,14 @@ updateEmployeeRole = () => {
             ])
 
             .then((answer) => {
-                for (i=0; i<roleOptions.length; i++) {
-                    if (answer.newRole === roleOptions[i].title) {
-                        newChoice = roleOptions[i].id;
+                for (i=0; i<rolesOptions.length; i++) {
+                    if (answer.newRoles === rolesOptions[i].title) {
+                        newChoice = rolesOptions[i].id;
                         connection.query(
-                            `UPDATE employee SET role_id = ${newChoice} WHERE id = ${employeeSelected}`
+                            `UPDATE employee SET roles_id = ${newChoice} WHERE id = ${employeeSelected}`
                         ),
                         (err, res) => {
-                            if (err) throw err;
+                                 if (err) throw err;
                         };
                     }
                 }
@@ -532,7 +539,7 @@ updateEmployeeManager = () => {
                         `UPDATE employee SET manager_id = ${newChoice} WHERE id = ${employeeSelected}`
                     ),
                     (err, res) => {
-                        if (err) throw err;
+                             if (err) throw err;
                     };
                     console.log("Manager Updated Successfully");
                 }
@@ -554,7 +561,7 @@ deleteSomething = () => {
                 message: "What would you like to delete?",
                 choices: [
                     "Delete Department",
-                    "Delete Role",
+                    "Delete Roles",
                     "Delete Employee",
                     "Exit",
                 ],
@@ -563,8 +570,8 @@ deleteSomething = () => {
         .then((answer) => {
             if (answer.delete === "Delete Department") {
                 deleteDepartment();
-            } else if (answer.delete === "Delete Role") {
-                deleteRole();
+            } else if (answer.delete === "Delete Roles") {
+                deleteRoles();
             } else if (answer.delete === "Delete Employee") {
                 deleteEmployee();
             } else if (answer.delete === "EXIT") {
@@ -582,8 +589,8 @@ deleteSomething = () => {
 // Department section of Delete Menu
 deleteDepartment = () => {
     let departmentOptions = [];
-    for (var i=0; i<departments.length; i++) {
-        departmentOptions.push(Object(departments[i]));
+    for (var i=0; i<department.length; i++) {
+        departmentOptions.push(Object(department[i]));
     }
     inquirer
         .prompt([
@@ -606,35 +613,35 @@ deleteDepartment = () => {
                     newChoice = departmentOptions[i].id;
                     connection.query(`DELETE FROM department WHERE id = ${newChoice}`),
                     (err, res) => {
-                        if (err) throw err;
+                             if (err) throw err;
                     };
                     console.log(
                         "Department: " + answer.deleteDepartment + " Deleted Successfully"
                     );
                 }
             }
-            getDepartments();
+            getDepartment();
             start();
         });
 };
 
 // Role section of Delete Menu
-deleteRole = () => {
-    let roleOptions = [];
+deleteRoles = () => {
+    let rolesOptions = [];
     for (var i=0; i<roles.length; i++) {
-        roleOptions.push(Object(roles[i]));
+        rolesOptions.push(Object(roles[i]));
     }
 
     inquirer
         .prompt([
             {
-                name: "deleteRole",
+                name: "deleteRoles",
                 type: "list",
                 message: "Which role would you like to delete?",
                 choices: function () {
                     var choiceArray = [];
-                    for (var i=0; i<roleOptions.length; i++) {
-                        choiceArray.push(roleOptions[i].title);
+                    for (var i=0; i<rolesOptions.length; i++) {
+                        choiceArray.push(rolesOptions[i].title);
                     }
                     return choiceArray;
                 },
@@ -642,12 +649,12 @@ deleteRole = () => {
         ])
 
         .then((answer) => {
-            for (i=0; i<roleOptions.length; i++) {
-                if (answer.deleteRole === roleOptions[i].title) {
-                    newChoice = roleOptions[i].id;
-                    connection.query(`DELETE FROM role WHERE id = ${newChoice}`),
+            for (i=0; i<rolesOptions.length; i++) {
+                if (answer.deleteRoles === rolesOptions[i].title) {
+                    newChoice = rolesOptions[i].id;
+                    connection.query(`DELETE FROM roles WHERE id = ${newChoice}`),
                     (err,res) => {
-                        if (err) throw err;
+                             if (err) throw err;
                     };
                     console.log("Role: " + answer.deleteRole + " Deleted Successfully");
                 }
@@ -685,7 +692,7 @@ deleteEmployee = () => {
                     newChoice = employeeOptions[i].id;
                     connection.query(`DELETE FROM employees WHERE id = ${newChoice}`),
                     (err, res) => {
-                        if (err) throw err;
+                             if (err) throw err;
                     };
                     console.log(
                       "Employee: " + answer.deleteEmployee + " Deleted Successfully"
