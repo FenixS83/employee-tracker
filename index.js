@@ -3,15 +3,17 @@ const mysql = require("mysql");
 const inquirer = require("inquirer");
 const {printTable} = require("console-table-printer");
 const figlet = require("figlet");
-const app = require("express");
-const PORT = 3001;
+const express = require("express");
+const PORT = process.env.PORT || 3001;
+
+const app = express();
+
+app.listen(PORT, () => console.log(`Listening for requests on port ${PORT}! 🏎️`)
+);
 
 const Sequelize = require("sequelize");
 require("dotenv").config();
 
-app.listen(PORT, () =>
-  console.log(`Listening for requests on port ${PORT}! 🏎️`)
-);
 
 
 const sequelize = new Sequelize(
@@ -22,7 +24,8 @@ const sequelize = new Sequelize(
         host: "localhost:3001",
         dialect: "mysql",
         port: 3001,
-    }
+    },
+    console.log("sequelize complete")
 );
 
 //Variables
@@ -38,10 +41,10 @@ var connection = mysql.createConnection({
     port: 3001,
 
     //Username
-    user: process.env.DB_USER,
+    user: "root",
 
     //Password
-    password: process.env.DB_PASSWORD,
+    password: "rootroot",
     database: "employees_db",
 });
 
@@ -50,7 +53,7 @@ figlet("EMPLOYEE TRACKER", (err, result) => {
 });
 
 // Connect functions
-connection.connect(function (err) {
+connection.connect(function(err) {
          if (err) throw err;
     start();
     getDepartment();
@@ -59,8 +62,10 @@ connection.connect(function (err) {
     getEmployees();
   });
 
-// Initiating prompts
-start = () => {
+  // Initiating prompts
+  console.log("before start");
+  start = () => {
+    console.log("inside start");
     inquirer
         .prompt({
             name: "choices",
