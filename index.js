@@ -4,7 +4,7 @@ const inquirer = require("inquirer");
 const {printTable} = require("console-table-printer");
 const figlet = require("figlet");
 const express = require("express");
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3306;
 
 const app = express();
 
@@ -17,13 +17,13 @@ require("dotenv").config();
 
 
 const sequelize = new Sequelize(
-    process.env.employees_db,
-    process.env.root,
-    process.env.rootroot,
+    process.env.DB_NAME,
+    process.env.DB_USER,
+    process.env.DB_PASSWORD,
     {
-        host: "localhost:3001",
+        host: "localhost:3306",
         dialect: "mysql",
-        port: 3001,
+        port: 3306,
     },
     console.log("sequelize complete")
 );
@@ -38,14 +38,14 @@ var connection = mysql.createConnection({
     host: "localhost",
 
     //Port
-    port: 3001,
+    port: 3306,
 
     //Username
-    user: "root",
+    user: DB_USER,
 
     //Password
-    password: "rootroot",
-    database: "employees_db",
+    password: DB_PASSWORD,
+    database: DB_NAME,
 });
 
 figlet("EMPLOYEE TRACKER", (err, result) => {
