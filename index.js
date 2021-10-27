@@ -73,7 +73,13 @@ start = () => {
       } else if (answer.choices === "DELETE") {
         deleteSomething();
       } else if (answer.choices === "EXIT") {
-        figlet("Thanks for using Employee Tracker", (err, result) => {
+        figlet("Thank You", (err, result) => {
+          console.log(err || result);
+        });
+        figlet("For Using", (err, result) => {
+          console.log(err || result);
+        });
+        figlet("Employee Tracker", (err, result) => {
           console.log(err || result);
         });
 
@@ -144,7 +150,13 @@ addSomething = () => {
         console.log("Add a new: " + answer.add);
         addEmployee();
       } else if (answer.add === "EXIT") {
-        figlet("Thanks for using Employee Tracker", (err, result) => {
+        figlet("Thank You", (err, result) => {
+          console.log(err || result);
+        });
+        figlet("For Using", (err, result) => {
+          console.log(err || result);
+        });
+        figlet("Employee Tracker", (err, result) => {
           console.log(err || result);
         });
 
@@ -216,6 +228,7 @@ addRole = () => {
           if (err) throw err;
 
           console.log("1 new role added: " + answer.title);
+          
           getRoles();
           start();
         }
@@ -322,7 +335,13 @@ viewSomething = () => {
       } else if (answer.viewChoice === "EMPLOYEES") {
         viewEmployees();
       } else if (answer.viewChoice === "EXIT") {
-        figlet("Thanks for using Employee Tracker", (err, result) => {
+        figlet("Thank You", (err, result) => {
+          console.log(err || result);
+        });
+        figlet("For Using", (err, result) => {
+          console.log(err || result);
+        });
+        figlet("Employee Tracker", (err, result) => {
           console.log(err || result);
         });
 
@@ -395,7 +414,13 @@ updateSomething = () => {
       } else if (answer.update === "Update employee managers") {
         updateEmployeeManager();
       } else if (answer.update === "EXIT") {
-        figlet("Thanks for using Employee Tracker", (err, result) => {
+        figlet("Thank You", (err, result) => {
+          console.log(err || result);
+        });
+        figlet("For Using", (err, result) => {
+          console.log(err || result);
+        });
+        figlet("Employee Tracker", (err, result) => {
           console.log(err || result);
         });
 
@@ -566,10 +591,15 @@ deleteSomething = () => {
       } else if (answer.delete === "Delete employee") {
         deleteEmployee();
       } else if (answer.delete === "EXIT") {
-        figlet("Thanks for using Employee Tracker", (err, result) => {
+        figlet("Thank You", (err, result) => {
           console.log(err || result);
         });
-
+        figlet("For Using", (err, result) => {
+          console.log(err || result);
+        });
+        figlet("Employee Tracker", (err, result) => {
+          console.log(err || result);
+        });
         connection.end();
       } else {
         connection.end();
@@ -649,9 +679,6 @@ deleteRole = () => {
             };
           console.log("Role: " + answer.deleteRole + " Deleted Succesfully");
         }
-        figlet("Role Deleted", (err, result) => {
-          console.log(err || result);
-        });
       }
       getRoles();
       start();
